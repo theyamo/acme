@@ -55,6 +55,7 @@ static const char	name_dumpfile[]		= "label dump filename";
 #define OPTION_FORMAT		"format"
 #define OPTION_OUTFILE		"outfile"
 #define OPTION_LABELDUMP	"labeldump"
+#define OPTION_VICELABELDUMP "vicemondump"
 #define OPTION_SETPC		"setpc"
 #define OPTION_CPU		"cpu"
 #define OPTION_INITMEM		"initmem"
@@ -105,20 +106,21 @@ static void show_help_and_exit(void) {
 "  " HOME_PAGE "\n"
 "\n"
 "Usage: acme [OPTION...] [FILE]...\n"
-"  -h, --" OPTION_HELP "             show this help and exit.\n"
-"  -f, --" OPTION_FORMAT " FORMAT    select output format.\n"
-"  -o, --" OPTION_OUTFILE " FILE     select output file.\n"
-"  -l, --" OPTION_LABELDUMP " FILE   select label dump file.\n"
-"      --" OPTION_SETPC " NUMBER     set program counter.\n"
-"      --" OPTION_CPU " CPU          select target processor.\n"
-"      --" OPTION_INITMEM " NUMBER   define 'empty' memory.\n"
-"      --" OPTION_MAXERRORS " NUMBER set number of errors before exiting.\n"
-"      --" OPTION_MAXDEPTH " NUMBER  set recursion depth for macro calls and !src.\n"
-"  -vDIGIT                set verbosity level.\n"	/*
+"  -h, --" OPTION_HELP "\t\t\tshow this help and exit.\n"
+"  -f, --" OPTION_FORMAT " FORMAT\t\tselect output format.\n"
+"  -o, --" OPTION_OUTFILE " FILE\t\tselect output file.\n"
+"  -l, --" OPTION_LABELDUMP " FILE\t\tselect label dump file.\n"
+"  -m, --" OPTION_VICELABELDUMP " FILE\tselect lable dump file (vicemon format).\n"
+"      --" OPTION_SETPC " NUMBER\t\tset program counter.\n"
+"      --" OPTION_CPU " CPU\t\t\tselect target processor.\n"
+"      --" OPTION_INITMEM " NUMBER\t\tdefine 'empty' memory.\n"
+"      --" OPTION_MAXERRORS " NUMBER\tset number of errors before exiting.\n"
+"      --" OPTION_MAXDEPTH " NUMBER\t\tset recursion depth for macro calls and !src.\n"
+"  -vDIGIT                \tset verbosity level.\n"	/*
 "  -DEXPRESSION           pre-define labels.\n"	FIXME	*/
-"      --" OPTION_USE_STDOUT "       fix for 'Relaunch64' IDE (see docs).\n"
+"      --" OPTION_USE_STDOUT "       \tfix for 'Relaunch64' IDE (see docs).\n"
 PLATFORM_OPTION_HELP
-"  -V, --" OPTION_VERSION "          show version and exit.\n"
+"  -V, --" OPTION_VERSION "          \tshow version and exit.\n"
 	);
 	exit(EXIT_SUCCESS);
 }
