@@ -283,6 +283,8 @@ static const char* long_option(const char* string) {
 		output_filename = cliargs_get_string(name_outfile);
 	else if(strcmp(string, OPTION_LABELDUMP) == 0)
 		labeldump_filename = cliargs_get_string(name_dumpfile);
+	else if(strcmp(string, OPTION_VICELABELDUMP) == 0)
+		labeldump_filename = cliargs_get_string(name_dumpfile);
 	else if(strcmp(string, OPTION_SETPC) == 0)
 		set_starting_pc();
 	else if(strcmp(string, OPTION_CPU) == 0)
@@ -325,6 +327,10 @@ static char short_option(const char* argument) {
 			break;
 
 			case 'l':	// "-l" selects label dump filename
+			labeldump_filename = cliargs_get_string(name_dumpfile);
+			break;
+
+			case 'm':
 			labeldump_filename = cliargs_get_string(name_dumpfile);
 			break;
 
