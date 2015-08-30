@@ -64,7 +64,6 @@ static const char	name_dumpfile[]		= "label dump filename";
 #define OPTION_USE_STDOUT	"use-stdout"
 #define OPTION_VERSION		"version"
 
-
 // Variables
 static const char	**toplevel_sources;
 static int		toplevel_src_count	= 0;
@@ -76,7 +75,7 @@ const char*	output_filename		= NULL;
 // maximum recursion depth for macro calls and "!source"
 signed long	macro_recursions_left	= MAX_NESTING;
 signed long	source_recursions_left	= MAX_NESTING;
-
+int    		label_dump_style        = LABEL_DUMP_STYLE_STANDARD; // standard or vicemon
 // Functions
 
 // Show release and platform info (and exit, if wanted)
@@ -283,8 +282,10 @@ static const char* long_option(const char* string) {
 		output_filename = cliargs_get_string(name_outfile);
 	else if(strcmp(string, OPTION_LABELDUMP) == 0)
 		labeldump_filename = cliargs_get_string(name_dumpfile);
-	else if(strcmp(string, OPTION_VICELABELDUMP) == 0)
+	else if(strcmp(string, OPTION_VICELABELDUMP) == 0) {
 		labeldump_filename = cliargs_get_string(name_dumpfile);
+		label_dump_style = LABEL_DUMP_STYLE_VICEMON;
+	}
 	else if(strcmp(string, OPTION_SETPC) == 0)
 		set_starting_pc();
 	else if(strcmp(string, OPTION_CPU) == 0)
@@ -332,6 +333,7 @@ static char short_option(const char* argument) {
 
 			case 'm':
 			labeldump_filename = cliargs_get_string(name_dumpfile);
+			label_dump_style = LABEL_DUMP_STYLE_VICEMON;
 			break;
 
 			case 'v':	// "-v" changes verbosity

@@ -64,6 +64,46 @@ static void dump_one_label(node_ra_t* node, FILE* fd) {
 	fprintf(fd, "\n");
 }
 
+/* Dump a vice label id
+   TODO:
+	- implement a way to distinguish between user defined constants
+	(not used as actual program labels). Currently everything gets
+	a value in memory, which causes a lot of conflicts in vicemon.
+    - (possible) support for drive memory maps
+*/
+static void dump_one_label_vicemon(node_ra_t* node, FILE *fd) {
+	label_t* label = node->body;
+
+	fprintf(fd, "al C:");
+
+//	if(!(label->result.flags & MVALUE_ISBYTE)) {
+	
+	switch(label->result.flags & MVALUE_FORCEBITS) {
+
+	case MVALUE_FORCE16:
+		printf("DEBUG: printing 16 bit label\n");
+		fprintf(fd, "%x\n", (unsigned) label->result.val.intval);
+		fprintf(fd, "%x", (unsigned) label->result.val.intval + 1);
+		break;
+
+	case MVALUE_FORCE24:
+		printf("DEBUG: printing 24 bit label\n");
+		fprintf(fd, "%x\n", (unsigned) label->result.val.intval);
+		fprintf(fd, "%x\n", (unsigned) label->result.val.intval + 1);
+		fprintf(fd, "%x", (unsigned) label->result.val.intval + 2);
+		break;
+		
+	default:
+		fprintf(fd, "%x", (unsigned) label->result.val.intval);
+	}
+
+	
+	fprintf(fd, " .%s", node->id_string);
+	fprintf(fd, "\n");
+// }		
+}
+
+
 // Search for label. Create if nonexistant. If created, give it flags "Flags".
 // The label name must be held in GlobalDynaBuf.
 label_t* Label_find(zone_t zone, int flags) {
@@ -220,7 +260,10 @@ void Label_parse_definition(zone_t zone, int stat_flags) {
 
 // Dump global labels to file
 void Label_dump_all(FILE* fd) {
-	Tree_dump_forest(Label_forest, ZONE_GLOBAL, dump_one_label, fd);
+	if(label_dump_style == LABEL_DUMP_STYLE_STANDARD)
+		Tree_dump_forest(Label_forest, ZONE_GLOBAL, dump_one_label, fd);
+	else
+		Tree_dump_forest(Label_forest, ZONE_GLOBAL, dump_one_label_vicemon, fd);
 	PLATFORM_SETFILETYPE_TEXT(labeldump_filename);
 }
 

@@ -9,14 +9,17 @@
 
 #include "config.h"
 
+#define LABEL_DUMP_STYLE_STANDARD	0
+#define LABEL_DUMP_STYLE_VICEMON	1
 
 // Variables
 extern const char*	labeldump_filename;
 extern const char*	output_filename;
+
 // maximum recursion depth for macro calls and "!source"
 extern signed long	macro_recursions_left;
 extern signed long	source_recursions_left;
-
+extern int    		label_dump_style;
 
 // Prototypes
 
