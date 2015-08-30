@@ -12,7 +12,7 @@ USERBIN		= $(HOME)/bin
 all: $(PROGS)
 
 acme: acme.o alu.o basics.o cliargs.o cpu.o dynabuf.o encoding.o flow.o global.o input.o label.o macro.o mnemo.o output.o platform.o section.o tree.o
-	$(CC) $(LIBS) $(CFLAGS) -o acme acme.o alu.o basics.o cliargs.o cpu.o dynabuf.o encoding.o flow.o global.o input.o label.o macro.o mnemo.o output.o platform.o section.o tree.o
+	$(CC) $(CFLAGS) -o acme acme.o alu.o basics.o cliargs.o cpu.o dynabuf.o encoding.o flow.o global.o input.o label.o macro.o mnemo.o output.o platform.o section.o tree.o $(LIBS) 
 	strip acme
 
 
