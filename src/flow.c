@@ -313,6 +313,19 @@ static enum eos_t PO_ifdef(void) {// Now GotByte = illegal char
 	return(ENSURE_EOS);
 }
 
+// skip parsin until block closed
+static enum eos_t PO_blkcomment(void) {
+	SKIPSPACE();
+	skip_or_parse_block(FALSE);
+	if(GotByte != CHAR_EOB)
+		Throw_serious_error(exception_no_right_brace);
+
+	GetByte();
+	
+	return(ENSURE_EOS);
+}
+
+
 // Macro definition ("!macro").
 static enum eos_t PO_macro(void) {// Now GotByte = illegal char
 	// In first pass, parse. In all other passes, skip.
@@ -385,8 +398,9 @@ static node_t	pseudo_opcodes[]	= {
 	PREDEFNODE("if",	PO_if),
 	PREDEFNODE("ifdef",	PO_ifdef),
 	PREDEFNODE("macro",	PO_macro),
-	PREDEFNODE("source",	PO_source),
-	PREDEFLAST("src",	PO_source),
+	PREDEFNODE("source",PO_source),
+	PREDEFNODE("src",	PO_source),
+	PREDEFLAST("skip",  PO_blkcomment),
 	//    ^^^^ this marks the last element
 };
 
