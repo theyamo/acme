@@ -46,6 +46,14 @@ static const char	s_arccos[]	= "arccos";
 #define s_cos	(s_arccos + 3)	// Yes, I know I'm sick
 static const char	s_arctan[]	= "arctan";
 #define s_tan	(s_arctan + 3)	// Yes, I know I'm sick
+static const char	s_sqrt[]	= "sqrt";
+#define s_sqrt	(s_sqrt)
+static const char	s_abs[]	= "abs";
+#define s_abs	(s_abs)
+static const char	s_rand[] = "rand";
+#define s_rand	(s_rand)
+static const char	s_round[] = "round";
+#define s_round	(s_round)
 
 // operator handles (FIXME - use function pointers instead? or too slow?)
 enum operator_handle {
@@ -62,6 +70,10 @@ enum operator_handle {
 	OPHANDLE_ARCSIN,	//	arcsin(v)
 	OPHANDLE_ARCCOS,	//	arccos(v)
 	OPHANDLE_ARCTAN,	//	arctan(v)
+	OPHANDLE_SQRT,      //  sqrt(v)
+	OPHANDLE_ABS,       //  fabs(v)
+	OPHANDLE_RAND,      //  rand(v)
+	OPHANDLE_ROUND,     //  round(v)
 //	monadic operators
 	OPHANDLE_OPENING,	//	(v	'(', starts subexpression
 	OPHANDLE_NOT,		//	!v	NOT v	bit-wise NOT
@@ -148,6 +160,10 @@ static struct operator ops_tan		= {OPHANDLE_TAN,	32};	// function
 static struct operator ops_arcsin	= {OPHANDLE_ARCSIN,	32};	// function
 static struct operator ops_arccos	= {OPHANDLE_ARCCOS,	32};	// function
 static struct operator ops_arctan	= {OPHANDLE_ARCTAN,	32};	// function
+static struct operator ops_sqrt  	= {OPHANDLE_SQRT,	32};	// function
+static struct operator ops_abs  	= {OPHANDLE_ABS,	32};	// function
+static struct operator ops_rand  	= {OPHANDLE_RAND,	32};	// function
+static struct operator ops_round  	= {OPHANDLE_ROUND,	32};	// function
 
 
 // variables
@@ -196,6 +212,10 @@ static struct ronode	function_list[]	= {
 	PREDEFNODE(s_arcsin,	&ops_arcsin),
 	PREDEFNODE(s_arccos,	&ops_arccos),
 	PREDEFNODE(s_arctan,	&ops_arctan),
+	PREDEFNODE(s_sqrt,	&ops_sqrt),
+	PREDEFNODE(s_abs,	&ops_abs),
+	PREDEFNODE(s_rand,	&ops_rand),
+	PREDEFNODE(s_round, &ops_round),
 	PREDEFNODE(s_sin,	&ops_sin),
 	PREDEFNODE(s_cos,	&ops_cos),
 	PREDEFLAST(s_tan,	&ops_tan),
@@ -950,7 +970,7 @@ push_dyadic:
 }
 
 
-// call C's sin/cos/tan function
+// call C's sin/cos/tan/sqrt/abs function
 static void perform_fp(double (*fn)(double))
 {
 	if ((RIGHT_FLAGS & MVALUE_IS_FP) == 0) {
@@ -961,6 +981,22 @@ static void perform_fp(double (*fn)(double))
 	RIGHT_ADDRREFS = 0;	// result now is a non-address
 }
 
+// generate a random value
+static void perform_rand(void) {
+	if ((RIGHT_FLAGS & MVALUE_IS_FP) == 0) {
+		RIGHT_FPVAL = RIGHT_INTVAL;
+		RIGHT_FLAGS |= MVALUE_IS_FP;
+	}
+	RIGHT_FPVAL = ((float)rand() / (float)(RAND_MAX)) * RIGHT_FPVAL;
+	RIGHT_ADDRREFS = 0;	// result now is a non-address
+}
+
+// convert right-hand value from fp to int
+static void perform_round(void)
+{
+	RIGHT_INTVAL = (int)round(RIGHT_FPVAL);
+	RIGHT_FLAGS &= ~MVALUE_IS_FP;
+}
 
 // make sure arg is in [-1, 1] range before calling function
 static void perform_ranged_fp(double (*fn)(double))
@@ -1124,7 +1160,23 @@ static void try_to_reduce_stacks(int *open_parentheses)
 		perform_fp(atan);	// also zeroes addr_refs
 		goto remove_next_to_last_operator;
 
-// monadic operators
+	case OPHANDLE_SQRT:
+		perform_fp(sqrt);	// also zeroes addr_refs
+		goto remove_next_to_last_operator;
+
+	case OPHANDLE_ABS:
+		perform_fp(fabs);	// also zeroes addr_refs
+		goto remove_next_to_last_operator;
+
+	case OPHANDLE_RAND:
+		perform_rand();	// also zeroes addr_refs
+		goto remove_next_to_last_operator;
+
+	case OPHANDLE_ROUND:
+		perform_round();	// also zeroes addr_refs
+		goto remove_next_to_last_operator;
+
+		// monadic operators
 	case OPHANDLE_NOT:
 		// fp becomes int
 		if (RIGHT_FLAGS & MVALUE_IS_FP)

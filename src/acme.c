@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include "alu.h"
 #include "cliargs.h"
 #include "config.h"
@@ -544,6 +545,12 @@ done:
 	return '\0';
 }
 
+static void random_init(void) {
+	struct timeval t;
+	gettimeofday(&t, NULL);
+	srand(t.tv_usec * t.tv_sec);
+}
+
 
 // guess what
 int main(int argc, const char *argv[])
@@ -571,6 +578,7 @@ int main(int argc, const char *argv[])
 	Macro_init();
 	Mnemo_init();
 	Output_init(fill_value);
+	random_init();
 	pseudoopcodes_init();	// setup keyword tree for pseudo opcodes
 	if (do_actual_work())
 		save_output_file();
